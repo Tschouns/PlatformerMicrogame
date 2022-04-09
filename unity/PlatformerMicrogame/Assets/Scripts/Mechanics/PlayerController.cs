@@ -5,6 +5,8 @@ using Platformer.Gameplay;
 using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
+using Assets.Scripts.Core;
+using Assets.Scripts.Data.State;
 
 namespace Platformer.Mechanics
 {
@@ -12,7 +14,7 @@ namespace Platformer.Mechanics
     /// This is the main class used to implement control of the player.
     /// It is a superset of the AnimationController class, but is inlined to allow for any kind of customisation.
     /// </summary>
-    public class PlayerController : KinematicObject
+    public class PlayerController : KinematicObject, IHasState<PlayerState>
     {
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
@@ -137,5 +139,38 @@ namespace Platformer.Mechanics
             InFlight,
             Landed
         }
+
+        #region StateHandling
+
+        public PlayerState GetCurrentState()
+        {
+            return new PlayerState
+            {
+                Position = VectorData.FromUnityVector(this.body.position),
+                Velocity = VectorData.FromUnityVector(this.body.velocity),
+                JumpState = this.jumpState,
+                StopJump = this.stopJump,
+                Jump = this.jump,
+                CurrentHp = this.health.CurrentHP,
+                ControlEnabled = this.controlEnabled,
+                Move = VectorData.FromUnityVector(this.move),
+            };
+        }
+
+        public void ApplyState(PlayerState state)
+        {
+            Argument.AssertNotNull(state, nameof(state));
+
+            this.body.position = state.Position.ToUnityVector3();
+            this.body.velocity = state.Velocity.ToUnityVector3();
+            this.jumpState = state.JumpState;
+            this.stopJump = state.StopJump;
+            this.jump = state.Jump;
+            this.health.CurrentHP = state.CurrentHp;
+            this.controlEnabled = state.ControlEnabled;
+            this.move = state.Move.ToUnityVector2();
+        }
+
+        #endregion
     }
 }
