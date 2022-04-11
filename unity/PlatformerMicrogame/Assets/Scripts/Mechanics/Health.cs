@@ -18,16 +18,16 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Indicates if the entity should be considered 'alive'.
         /// </summary>
-        public bool IsAlive => currentHP > 0;
+        public bool IsAlive => this.CurrentHP > 0;
 
-        int currentHP;
+        public int CurrentHP { get; set; } 
 
         /// <summary>
         /// Increment the HP of the entity.
         /// </summary>
         public void Increment()
         {
-            currentHP = Mathf.Clamp(currentHP + 1, 0, maxHP);
+            this.CurrentHP = Mathf.Clamp(this.CurrentHP + 1, 0, maxHP);
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace Platformer.Mechanics
         /// </summary>
         public void Decrement()
         {
-            currentHP = Mathf.Clamp(currentHP - 1, 0, maxHP);
-            if (currentHP == 0)
+            this.CurrentHP = Mathf.Clamp(this.CurrentHP - 1, 0, maxHP);
+            if (this.CurrentHP == 0)
             {
                 var ev = Schedule<HealthIsZero>();
                 ev.health = this;
@@ -49,12 +49,12 @@ namespace Platformer.Mechanics
         /// </summary>
         public void Die()
         {
-            while (currentHP > 0) Decrement();
+            while (this.CurrentHP > 0) Decrement();
         }
 
         void Awake()
         {
-            currentHP = maxHP;
+            this.CurrentHP = maxHP;
         }
     }
 }

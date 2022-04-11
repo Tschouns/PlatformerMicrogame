@@ -1,3 +1,5 @@
+using Assets.Scripts.Core;
+using Assets.Scripts.Data.State;
 using Platformer.Gameplay;
 using UnityEngine;
 using static Platformer.Core.Simulation;
@@ -11,7 +13,7 @@ namespace Platformer.Mechanics
     /// TokenController in the scene.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class TokenInstance : MonoBehaviour
+    public class TokenInstance : MonoBehaviour, IHasState<TokenState>
     {
         public AudioClip tokenCollectAudio;
         [Tooltip("If true, animation will start at a random position in the sequence.")]
@@ -58,5 +60,24 @@ namespace Platformer.Mechanics
             ev.token = this;
             ev.player = player;
         }
+
+        #region StateHandling
+
+        public TokenState GetCurrentState()
+        {
+            return new TokenState
+            {
+                Collected = this.collected,
+            };
+        }
+
+        public void ApplyState(TokenState state)
+        {
+            Argument.AssertNotNull(state, nameof(state));
+
+            this.collected = state.Collected;
+        }
+
+        #endregion
     }
 }
